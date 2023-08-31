@@ -13,4 +13,13 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Src\Auth\Aplicacion\" />
+    <Folder Include="Src\Auth\Dominio\Abstracta\" />
+    <Folder Include="Src\Auth\Dominio\Entidades\" />
+    <Folder Include="Src\Auth\Dominio\Especificaciones\" />
+    <Folder Include="Src\Auth\Dominio\Interface\" />
+    <Folder Include="Src\Auth\Infraestructura\Interface\" />
+  </ItemGroup>
+
 </Project>
