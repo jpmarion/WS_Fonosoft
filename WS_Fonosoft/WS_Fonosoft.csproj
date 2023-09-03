@@ -10,16 +10,10 @@
     <PackageReference Include="CifradoPE" Version="2.0.2" />
     <PackageReference Include="CompartidoPE" Version="1.0.10" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.10" />
+    <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="6.32.2" />
+    <PackageReference Include="MySql.Data" Version="8.1.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Src\Auth\Aplicacion\" />
-    <Folder Include="Src\Auth\Dominio\Abstracta\" />
-    <Folder Include="Src\Auth\Dominio\Entidades\" />
-    <Folder Include="Src\Auth\Dominio\Especificaciones\" />
-    <Folder Include="Src\Auth\Dominio\Interface\" />
-    <Folder Include="Src\Auth\Infraestructura\Interface\" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.32.2" />
   </ItemGroup>
 
 </Project>
