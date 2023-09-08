@@ -12,6 +12,7 @@ namespace WS_Fonosoft.Src.Auth.Infraestructura.Interface
         IUsuario BuscarUsuarioXNombreUsuario(string nombreUsuario);
         void ConfirmarUsuario(int id);
         IUsuario BuscarUsuarioXNombreUsuarioXPassword(string NombreUsuario, string Password);
+        void ResetPasswordUsuario(string NombreUsuario, string Password);
         #endregion
     }
 }

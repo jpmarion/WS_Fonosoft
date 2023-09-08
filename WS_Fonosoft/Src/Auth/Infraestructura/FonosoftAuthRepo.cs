@@ -1,4 +1,5 @@
-﻿using MySql.Data.MySqlClient;
+﻿using Microsoft.Extensions.Primitives;
+using MySql.Data.MySqlClient;
 using System.Data;
 using WS_Fonosoft.Src.Auth.Dominio.Entidades;
 using WS_Fonosoft.Src.Auth.Dominio.Interface;
@@ -130,6 +131,16 @@ namespace WS_Fonosoft.Src.Auth.Infraestructura
             }
             return null;
 
+        }
+        public void ResetPasswordUsuario(string NombreUsuario, string Password)
+        {
+            MySqlCommand cmd = new MySqlCommand("UsuarioResetPassword_U", getConexion());
+            cmd.CommandType = CommandType.StoredProcedure;
+
+            cmd.Parameters.AddWithValue("@NombreUsuario", NombreUsuario);
+            cmd.Parameters.AddWithValue("@Password", Password);
+
+            cmd.ExecuteNonQuery();
         }
         #endregion
     }

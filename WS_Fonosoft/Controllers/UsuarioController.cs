@@ -103,7 +103,7 @@ namespace WS_Fonosoft.Controllers
 
             if (_responseUsuario.Error.NroError == string.Empty)
             {
-                if (_responseUsuario.Data.Count==0)
+                if (_responseUsuario.Data.Count == 0)
                 {
                     return NoContent();
                 }
@@ -127,6 +127,29 @@ namespace WS_Fonosoft.Controllers
                 responseLogin.Token = tokenHandler.WriteToken(token);
 
                 return Ok(responseLogin);
+            }
+            else
+            {
+                return StatusCode(400, _responseUsuario.Error);
+            }
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [Route("ResetContrasenia")]
+        [ProducesResponseType(typeof(RqsLogin), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Error), StatusCodes.Status400BadRequest)]
+        public IActionResult ResetContrasenia([FromServices] IEmailRepo emailRepo, string NombreUsuario)
+        {
+            IUsuario usuario = new Usuario();
+            usuario.NombreUsuario = NombreUsuario;
+
+            AEjecutarCU<IUsuario> resetContraseniaCU = new ResetContraseniaCU<IUsuario>(_responseUsuario, _repoFonoAuth, emailRepo, _aes, usuario);
+            _responseUsuario = resetContraseniaCU.Ejecutar();
+
+            if (_responseUsuario.Error.NroError == string.Empty)
+            {
+                return Ok();
             }
             else
             {
