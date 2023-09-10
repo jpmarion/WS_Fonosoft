@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Primitives;
-using MySql.Data.MySqlClient;
+﻿using MySql.Data.MySqlClient;
 using System.Data;
 using WS_Fonosoft.Src.Auth.Dominio.Entidades;
 using WS_Fonosoft.Src.Auth.Dominio.Interface;
@@ -138,6 +137,16 @@ namespace WS_Fonosoft.Src.Auth.Infraestructura
             cmd.CommandType = CommandType.StoredProcedure;
 
             cmd.Parameters.AddWithValue("@NombreUsuario", NombreUsuario);
+            cmd.Parameters.AddWithValue("@Password", Password);
+
+            cmd.ExecuteNonQuery();
+        }
+        public void ModificarContrasenia(int IdUsuario, string Password)
+        {
+            MySqlCommand cmd = new MySqlCommand("UsuarioModificarPassword_U", getConexion());
+            cmd.CommandType = CommandType.StoredProcedure;
+
+            cmd.Parameters.AddWithValue("@IdUsuario", IdUsuario);
             cmd.Parameters.AddWithValue("@Password", Password);
 
             cmd.ExecuteNonQuery();

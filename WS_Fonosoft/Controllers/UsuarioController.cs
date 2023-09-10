@@ -135,7 +135,6 @@ namespace WS_Fonosoft.Controllers
         }
 
         [HttpPost]
-        [AllowAnonymous]
         [Route("ResetContrasenia")]
         [ProducesResponseType(typeof(RqsLogin), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(Error), StatusCodes.Status400BadRequest)]
@@ -146,6 +145,29 @@ namespace WS_Fonosoft.Controllers
 
             AEjecutarCU<IUsuario> resetContraseniaCU = new ResetContraseniaCU<IUsuario>(_responseUsuario, _repoFonoAuth, emailRepo, _aes, usuario);
             _responseUsuario = resetContraseniaCU.Ejecutar();
+
+            if (_responseUsuario.Error.NroError == string.Empty)
+            {
+                return Ok();
+            }
+            else
+            {
+                return StatusCode(400, _responseUsuario.Error);
+            }
+        }
+
+        [HttpPost]
+        [Route("ModificarContrasenia")]
+        [ProducesResponseType(typeof(RqsLogin), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Error), StatusCodes.Status400BadRequest)]
+        public IActionResult ModificarContrasenia(int IdUsuario,string Passwrod)
+        {
+            IUsuario usuario = new Usuario();
+            usuario.Id = IdUsuario;
+            usuario.Password = Passwrod;
+
+            AEjecutarCU<IUsuario> modificarContraseniaCU = new ModificarContraseniaCU<IUsuario>(_responseUsuario,_repoFonoAuth,_aes,usuario);
+            _responseUsuario = modificarContraseniaCU.Ejecutar();
 
             if (_responseUsuario.Error.NroError == string.Empty)
             {

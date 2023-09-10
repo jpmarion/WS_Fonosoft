@@ -13,6 +13,7 @@ namespace WS_Fonosoft.Src.Auth.Infraestructura.Interface
         void ConfirmarUsuario(int id);
         IUsuario BuscarUsuarioXNombreUsuarioXPassword(string NombreUsuario, string Password);
         void ResetPasswordUsuario(string NombreUsuario, string Password);
+        void ModificarContrasenia(int IdUsuario, string Password)
         #endregion
     }
 }
