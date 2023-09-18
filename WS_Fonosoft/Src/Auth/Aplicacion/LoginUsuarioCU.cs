@@ -14,22 +14,25 @@ namespace WS_Fonosoft.Src.Auth.Aplicacion
         private readonly IUsuario _usuario;
         private readonly ValidarUsuarioNombreUsuario _validarUsuarioNombreUsuario;
         private readonly ValidarUsuarioPassword _validarUsuarioPassword = new ValidarUsuarioPassword();
+        private readonly ValidarUsuarioNombrePassword _validarUsuarioNombrePassword;
 
-        public LoginUsuarioCU(IResponse<T> response, IMysqlRepositorio mysqlRepositorio,IAes aes, IUsuario usuario) : base(response)
+        public LoginUsuarioCU(IResponse<T> response, IMysqlRepositorio mysqlRepositorio, IAes aes, IUsuario usuario) : base(response)
         {
             _mysqlRepositorio = mysqlRepositorio;
             _aes = aes;
             _usuario = usuario;
             _validarUsuarioNombreUsuario = new ValidarUsuarioNombreUsuario(_mysqlRepositorio);
             _validarUsuarioNombreUsuario.ProximaValidcion(_validarUsuarioPassword);
+            _validarUsuarioNombrePassword = new ValidarUsuarioNombrePassword(_mysqlRepositorio);
         }
         public override IList<T> Proceso()
         {
             _validarUsuarioNombreUsuario.EsValido(_usuario);
-            _usuario.NombreUsuario = _aes.Encriptar(_usuario.NombreUsuario.ToLower());
             _usuario.Password = _aes.Encriptar(_usuario.Password);
+            _usuario.NombreUsuario = _aes.Encriptar(_usuario.NombreUsuario.ToLower());
+            _validarUsuarioNombrePassword.EsValido(_usuario);
 
-            IUsuario usuario = _mysqlRepositorio.BuscarUsuarioXNombreUsuarioXPassword(_usuario.NombreUsuario, _usuario.Password);
+            IUsuario usuario = _mysqlRepositorio.BuscarUsuarioXNombreUsuario(_usuario.NombreUsuario);
 
             if (usuario != null)
             {

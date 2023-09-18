@@ -23,24 +23,26 @@ namespace WS_Fonosoft.Controllers
     {
         private readonly IConfiguration _configuration;
         private IResponse<IUsuario> _responseUsuario;
+        private IResponse<IError> _responseError;
         private readonly IMysqlRepositorio _repoFonoAuth;
         private readonly IAes _aes;
 
-        public UsuarioController(IConfiguration configuration, IResponse<IUsuario> responseUsuario, IMysqlRepositorio repoFonoAuth, IAes aes)
+        public UsuarioController(IConfiguration configuration, IResponse<IUsuario> responseUsuario, IResponse<IError> responseError, IMysqlRepositorio repoFonoAuth, IAes aes)
         {
             _configuration = configuration;
             _responseUsuario = responseUsuario;
+            _responseError = responseError;
             _repoFonoAuth = repoFonoAuth;
             _aes = aes;
         }
 
-        [HttpPost]
         [AllowAnonymous]
+        [HttpPost]
         [Route("Registrar")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(Error), StatusCodes.Status400BadRequest)]
         public IActionResult Registrar([FromServices] IEmailRepo emailRepo,
-                                       RqsRegistrar rqsRegistrar)
+                               RqsRegistrar rqsRegistrar)
         {
             IUsuario usuario = new Usuario();
             usuario.NombreUsuario = rqsRegistrar.NombreUsuario;
@@ -100,6 +102,7 @@ namespace WS_Fonosoft.Controllers
 
             AEjecutarCU<IUsuario> loginUsuarioCU = new LoginUsuarioCU<IUsuario>(_responseUsuario, _repoFonoAuth, _aes, usuario);
             _responseUsuario = loginUsuarioCU.Ejecutar();
+            usuario.Id = _responseUsuario.Data[0].Id;
 
             if (_responseUsuario.Error.NroError == string.Empty)
             {
@@ -107,26 +110,18 @@ namespace WS_Fonosoft.Controllers
                 {
                     return NoContent();
                 }
+                var authClaims = new List<Claim>
+            {
+               new Claim(ClaimTypes.Name, usuario.NombreUsuario),
+               new Claim(JwtRegisteredClaimNames.Jti, usuario.Id.ToString() )
+            };
 
-                var tokenHandler = new JwtSecurityTokenHandler();
-                string key = @"{@BCe-DWtXGWZu7`k7W^&t];<9'vB>r=" + _configuration.GetValue<string>("Jwt:key");
-                var tokenKey = Encoding.ASCII.GetBytes(key);
-                SecurityTokenDescriptor securityToken = new SecurityTokenDescriptor
-                {
-                    Subject = new ClaimsIdentity(new Claim[]
-                    {
-                        new Claim(ClaimTypes.Name,usuario.NombreUsuario)
-                    }),
-                    Expires = DateTime.UtcNow.AddHours(8),
-                    SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(tokenKey), SecurityAlgorithms.HmacSha256Signature)
-                };
+                RspLogin rspLogin = new RspLogin();
+                rspLogin.Id = usuario.Id;
+                rspLogin.Token = GenerateToken(authClaims);
 
-                var token = tokenHandler.CreateToken(securityToken);
-                RspLogin responseLogin = new RspLogin();
-                responseLogin.Id = _responseUsuario.Data[0].Id;
-                responseLogin.Token = tokenHandler.WriteToken(token);
 
-                return Ok(responseLogin);
+                return Ok(rspLogin);
             }
             else
             {
@@ -157,16 +152,17 @@ namespace WS_Fonosoft.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         [Route("ModificarContrasenia")]
-        [ProducesResponseType(typeof(RqsLogin), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(RqsModificarContrasenia), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(Error), StatusCodes.Status400BadRequest)]
-        public IActionResult ModificarContrasenia(int IdUsuario,string Passwrod)
+        public IActionResult ModificarContrasenia(RqsModificarContrasenia rqpsModificarContrasenia)
         {
             IUsuario usuario = new Usuario();
-            usuario.Id = IdUsuario;
-            usuario.Password = Passwrod;
+            usuario.Id = rqpsModificarContrasenia.IdUsuario;
+            usuario.Password = rqpsModificarContrasenia.Passwrod;
 
-            AEjecutarCU<IUsuario> modificarContraseniaCU = new ModificarContraseniaCU<IUsuario>(_responseUsuario,_repoFonoAuth,_aes,usuario);
+            AEjecutarCU<IUsuario> modificarContraseniaCU = new ModificarContraseniaCU<IUsuario>(_responseUsuario, _repoFonoAuth, _aes, usuario);
             _responseUsuario = modificarContraseniaCU.Ejecutar();
 
             if (_responseUsuario.Error.NroError == string.Empty)
@@ -178,12 +174,70 @@ namespace WS_Fonosoft.Controllers
                 return StatusCode(400, _responseUsuario.Error);
             }
         }
+
+        [HttpGet]
+        [Route("ListarErrores")]
+        [ProducesResponseType(typeof(RspListarErrores), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Error), StatusCodes.Status400BadRequest)]
+        public IActionResult ListarErrores()
+        {
+            AEjecutarCU<IError> listarErroresCU = new ListarErroresCU<IError>(_responseError);
+            _responseError = listarErroresCU.Ejecutar();
+
+            if (_responseError.Error.NroError == string.Empty)
+            {
+                if (_responseError.Data.Count == 0)
+                {
+                    return NoContent();
+                }
+
+                IList<RspListarErrores> lstErrores = new List<RspListarErrores>();
+                foreach (IError item in _responseError.Data)
+                {
+                    RspListarErrores rspListarErrores = new RspListarErrores();
+                    rspListarErrores.NroError = item.NroError;
+                    rspListarErrores.MsgError = item.MsgError;
+                    lstErrores.Add(rspListarErrores);
+                }
+
+                return new OkObjectResult(lstErrores);
+            }
+            else
+            {
+                return StatusCode(400, _responseError.Error);
+            }
+        }
+
+        private string GenerateToken(IEnumerable<Claim> claims)
+        {
+            var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWTKey:Secret"]));
+            var _TokenExpiryTimeInHour = Convert.ToInt64(_configuration["JWTKey:TokenExpiryTimeInHour"]);
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Issuer = _configuration["JWTKey:ValidIssuer"],
+                Audience = _configuration["JWTKey:ValidAudience"],
+                //Expires = DateTime.UtcNow.AddHours(_TokenExpiryTimeInHour),
+                Expires = DateTime.UtcNow.AddMinutes(1),
+                SigningCredentials = new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256),
+                Subject = new ClaimsIdentity(claims)
+            };
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            return tokenHandler.WriteToken(token);
+        }
     }
     public class RqsRegistrar
     {
         public string NombreUsuario { get; set; }
         public string Email { get; set; }
         public string Password { get; set; }
+    }
+    public class RqsModificarContrasenia
+    {
+        public int IdUsuario { get; set; }
+        public string Passwrod { get; set; }
+
     }
     public class RqsLogin
     {
@@ -194,5 +248,10 @@ namespace WS_Fonosoft.Controllers
     {
         public int Id { get; set; }
         public string Token { get; set; }
+    }
+    public class RspListarErrores
+    {
+        public string NroError { get; set; }
+        public string MsgError { get; set; }
     }
 }

@@ -84,6 +84,7 @@ namespace WS_Fonosoft.Src.Auth.Infraestructura
 
                 usuario.Id = int.Parse(drUsuario["Id"].ToString());
                 usuario.NombreUsuario = drUsuario["NombreUsuario"].ToString();
+                usuario.Password = drUsuario["Password"].ToString();
                 usuario.Email = drUsuario["Email"].ToString();
                 usuario.FechaCreacion = DateTime.Parse(drUsuario["FechaCreacion"].ToString());
                 usuario.Confirmacion = Convert.ToBoolean(drUsuario["Confirmacion"]);

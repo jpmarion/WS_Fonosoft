@@ -20,7 +20,9 @@ namespace WS_Fonosoft.Src.Auth.Dominio.Entidades
             [Description("Formato incorrecto de contraseña")]
             PasswordFormatoIncorrecto = 5,
             [Description("Ingrese el Id del usuario")]
-            IdUsuarioNullOrEmpty = 6
+            IdUsuarioNullOrEmpty = 6,
+            [Description("Usuario o password incorrecto")]
+            UsuarioPassworIncorrecto = 7
         }
         public ErroresAuth(Enum enumValor) : base(enumValor) { }
     }
