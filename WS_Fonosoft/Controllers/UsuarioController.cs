@@ -102,7 +102,6 @@ namespace WS_Fonosoft.Controllers
 
             AEjecutarCU<IUsuario> loginUsuarioCU = new LoginUsuarioCU<IUsuario>(_responseUsuario, _repoFonoAuth, _aes, usuario);
             _responseUsuario = loginUsuarioCU.Ejecutar();
-            usuario.Id = _responseUsuario.Data[0].Id;
 
             if (_responseUsuario.Error.NroError == string.Empty)
             {
@@ -110,11 +109,12 @@ namespace WS_Fonosoft.Controllers
                 {
                     return NoContent();
                 }
-                var authClaims = new List<Claim>
-            {
-               new Claim(ClaimTypes.Name, usuario.NombreUsuario),
-               new Claim(JwtRegisteredClaimNames.Jti, usuario.Id.ToString() )
-            };
+                var authClaims = new List<Claim> {
+                    new Claim(ClaimTypes.Name, usuario.NombreUsuario),
+                    new Claim(JwtRegisteredClaimNames.Jti, usuario.Id.ToString() )
+                };
+
+                usuario.Id = _responseUsuario.Data[0].Id;
 
                 RspLogin rspLogin = new RspLogin();
                 rspLogin.Id = usuario.Id;
@@ -133,6 +133,7 @@ namespace WS_Fonosoft.Controllers
         [Route("ResetContrasenia")]
         [ProducesResponseType(typeof(RqsLogin), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(Error), StatusCodes.Status400BadRequest)]
+        [Authorize]
         public IActionResult ResetContrasenia([FromServices] IEmailRepo emailRepo, string NombreUsuario)
         {
             IUsuario usuario = new Usuario();
@@ -160,7 +161,7 @@ namespace WS_Fonosoft.Controllers
         {
             IUsuario usuario = new Usuario();
             usuario.Id = rqpsModificarContrasenia.IdUsuario;
-            usuario.Password = rqpsModificarContrasenia.Passwrod;
+            usuario.Password = rqpsModificarContrasenia.Password;
 
             AEjecutarCU<IUsuario> modificarContraseniaCU = new ModificarContraseniaCU<IUsuario>(_responseUsuario, _repoFonoAuth, _aes, usuario);
             _responseUsuario = modificarContraseniaCU.Ejecutar();
@@ -216,8 +217,8 @@ namespace WS_Fonosoft.Controllers
             {
                 Issuer = _configuration["JWTKey:ValidIssuer"],
                 Audience = _configuration["JWTKey:ValidAudience"],
-                //Expires = DateTime.UtcNow.AddHours(_TokenExpiryTimeInHour),
-                Expires = DateTime.UtcNow.AddMinutes(1),
+                Expires = DateTime.UtcNow.AddHours(_TokenExpiryTimeInHour),
+                //Expires = DateTime.UtcNow.AddMinutes(1),
                 SigningCredentials = new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256),
                 Subject = new ClaimsIdentity(claims)
             };
@@ -236,7 +237,7 @@ namespace WS_Fonosoft.Controllers
     public class RqsModificarContrasenia
     {
         public int IdUsuario { get; set; }
-        public string Passwrod { get; set; }
+        public string Password { get; set; }
 
     }
     public class RqsLogin

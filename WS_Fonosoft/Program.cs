@@ -11,8 +11,6 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
-string _MyAllowSpecificOrigins = "_MyAllowSpecificOrigins";
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -108,18 +106,6 @@ builder.Services.AddScoped<IResponse<IUsuario>, Response<IUsuario>>();
 builder.Services.AddScoped<IError, Error>();
 builder.Services.AddScoped<IResponse<IError>, Response<IError>>();
 
-#region CORS
-builder.Services.AddCors(option =>
-{
-    option.AddPolicy(name: _MyAllowSpecificOrigins,
-        builder =>
-        {
-            builder.WithOrigins("http://localhost:4200")
-        .AllowAnyHeader()
-        .AllowAnyMethod();
-        });
-});
-#endregion
 #region MYSQL
 ConfigurationBuilder builderConfig = new ConfigurationBuilder();
 builderConfig.SetBasePath(Directory.GetCurrentDirectory())
@@ -149,6 +135,23 @@ string contrasenia = configuration.GetValue<string>("Email:contrasenia");
 bool habilitaSSL = configuration.GetValue<bool>("Email:habilitaSSL");
 builder.Services.AddScoped<IEmailRepo>(_ => new EmailRepo(host, port, usuario, contrasenia, habilitaSSL));
 #endregion
+#region CORS
+var MyAllowSpecificOrigins = "_MyAllowSubdomainPolicy";
+var origenes = builder.Configuration["CORS:MyAllowSpecificOrigins"];
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: MyAllowSpecificOrigins,
+        policy =>
+        {
+            policy.WithOrigins(origenes)
+                .AllowAnyHeader()
+                .AllowAnyMethod();
+        });
+});
+
+
+#endregion
 
 var app = builder.Build();
 
@@ -160,11 +163,12 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseAuthentication();
+app.UseRouting();
+app.UseCors(MyAllowSpecificOrigins);
 app.UseAuthorization();
+//app.UseAuthentication();
 
 app.MapControllers();
 
-app.UseCors(_MyAllowSpecificOrigins);
 
 app.Run();
