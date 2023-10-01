@@ -9,13 +9,13 @@ namespace WS_Fonosoft.Src.Auth.Aplicacion
 {
     public class ModificarContraseniaCU<T> : AEjecutarCU<T>
     {
-        private readonly IMysqlRepositorio _mysqlRepositorio;
+        private readonly IMysqlRepositorioAuth _mysqlRepositorio;
         private readonly IAes _aes;
         private readonly IUsuario _usuario;
         private ValidarUsuarioId _validarUsuarioId = new ValidarUsuarioId();
         private ValidarUsuarioPassword _validarUsuarioPassword = new ValidarUsuarioPassword();
 
-        public ModificarContraseniaCU(IResponse<T> response, IMysqlRepositorio mysqlRepositorio, IAes aes, IUsuario usuario) : base(response)
+        public ModificarContraseniaCU(IResponse<T> response, IMysqlRepositorioAuth mysqlRepositorio, IAes aes, IUsuario usuario) : base(response)
         {
             _mysqlRepositorio = mysqlRepositorio;
             _aes = aes;

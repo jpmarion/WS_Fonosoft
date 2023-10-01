@@ -1,17 +1,16 @@
 ﻿using MySql.Data.MySqlClient;
 using System.Data;
-using WS_Fonosoft.Src.ObraSocial.Dominio.Entidades;
 using WS_Fonosoft.Src.ObraSocial.Dominio.Interface;
 using WS_Fonosoft.Src.ObraSocial.Infraestructura.Interface;
 
 namespace WS_Fonosoft.Src.ObraSocial.Infraestructura
 {
-    public class FonosoftUsuarioRepo : IMysqlRepositorio
+    public class FonosoftObraSocialRepo : IMysqlRepositorioObraSocial
     {
         private readonly string _connectionString;
         private MySqlConnection _conexion;
         MySqlTransaction? _mySqlTransaction = null;
-        public FonosoftUsuarioRepo(string server, string user, string database, string port, string password)
+        public FonosoftObraSocialRepo(string server, string user, string database, string port, string password)
         {
             _connectionString = $"server={server};user={user};database={database};port={port};password={password}";
             _conexion = new MySqlConnection(_connectionString);
@@ -53,7 +52,7 @@ namespace WS_Fonosoft.Src.ObraSocial.Infraestructura
             if (dtObraSocial.Rows.Count != 0)
             {
                 DataRow drObraSocial = dtObraSocial.Rows[0];
-                obraSocial.Id = int.Parse(drObraSocial["IdObraSocial"].ToString());
+                obraSocial.Id = int.Parse(drObraSocial["Id"].ToString());
                 return obraSocial;
             }
             return null;
@@ -75,7 +74,10 @@ namespace WS_Fonosoft.Src.ObraSocial.Infraestructura
             {
                 DataRow drObraSocial = dtObraSocial.Rows[0];
                 IObraSocial obraSocial = new Dominio.Entidades.ObraSocial();
-                obraSocial.Id = int.Parse(drObraSocial["IdObraSocial"].ToString());
+                obraSocial.Id = int.Parse(drObraSocial["Id"].ToString());
+                obraSocial.Nombre = drObraSocial["Nombre"].ToString();
+                obraSocial.Periodo.FechaInicio = DateTime.Parse(drObraSocial["FechaInicio"].ToString());
+                obraSocial.Periodo.FechaFin = DateTime.Parse(drObraSocial["FechaFin"].ToString());
                 return obraSocial;
             }
             return null;

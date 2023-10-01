@@ -2,7 +2,7 @@
 
 namespace WS_Fonosoft.Src.ObraSocial.Infraestructura.Interface
 {
-    public interface IMysqlRepositorio
+    public interface IMysqlRepositorioObraSocial
     {
         void BeginTransaction();
         void CommitTransaction();

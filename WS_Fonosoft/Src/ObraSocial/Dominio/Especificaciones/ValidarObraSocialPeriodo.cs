@@ -22,7 +22,7 @@ namespace WS_Fonosoft.Src.ObraSocial.Dominio.Especificaciones
                 exception.Data.Add(error.GetNroError(), error.GetDescription());
                 throw exception;
             }
-            else if (DateTime.Compare(obraSocial.Periodo.FechaInicio, obraSocial.Periodo.FechaFin) < 0)
+            else if (DateTime.Compare(obraSocial.Periodo.FechaInicio, obraSocial.Periodo.FechaFin) > 0)
             {
                 Exception exception = new Exception();
                 ErroresObraSocial error = new ErroresObraSocial(ErroresObraSocial.ErrorObraSocial.FechaInicioSuperior);

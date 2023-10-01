@@ -8,12 +8,12 @@ namespace WS_Fonosoft.Src.ObraSocial.Aplicacion
 {
     public class AgregarObraSocialCU<T> : AEjecutarCU<T>
     {
-        private readonly IMysqlRepositorio _mysqlRepositorio;
+        private readonly IMysqlRepositorioObraSocial _mysqlRepositorio;
         private IObraSocial _obraSocial;
         private readonly ValidarObraSocialNombre _validarObraSocialNombre = new ValidarObraSocialNombre();
         private readonly ValidarObrasocialNombreExiste _validarObrasocialNombreExiste;
         private readonly ValidarObraSocialPeriodo _validarObraSocialPeriodo = new ValidarObraSocialPeriodo();
-        public AgregarObraSocialCU(IResponse<T> response, IMysqlRepositorio mysqlRepositorio, IObraSocial obraSocial) : base(response)
+        public AgregarObraSocialCU(IResponse<T> response, IMysqlRepositorioObraSocial mysqlRepositorio, IObraSocial obraSocial) : base(response)
         {
             _mysqlRepositorio = mysqlRepositorio;
             _obraSocial = obraSocial;

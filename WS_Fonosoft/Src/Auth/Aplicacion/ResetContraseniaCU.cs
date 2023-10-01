@@ -12,14 +12,14 @@ namespace WS_Fonosoft.Src.Auth.Aplicacion
 {
     public class ResetContraseniaCU<T> : AEjecutarCU<T>
     {
-        private readonly IMysqlRepositorio _mysqlRepositorio;
+        private readonly IMysqlRepositorioAuth _mysqlRepositorio;
         private readonly IEmailRepo _emailRepo;
         private readonly IAes _aes;
         private IUsuario _usuario;
         private readonly ValidarUsuarioNombreUsuario _validarUsuarioNombreUsuario;
         private readonly ValidarUsuarioPassword _validarUsuarioPassword = new ValidarUsuarioPassword();
 
-        public ResetContraseniaCU(IResponse<T> response, IMysqlRepositorio mysqlRepositorio, IEmailRepo emailRepo, IAes aes, IUsuario usuario) : base(response)
+        public ResetContraseniaCU(IResponse<T> response, IMysqlRepositorioAuth mysqlRepositorio, IEmailRepo emailRepo, IAes aes, IUsuario usuario) : base(response)
         {
             _mysqlRepositorio = mysqlRepositorio;
             this._emailRepo = emailRepo;

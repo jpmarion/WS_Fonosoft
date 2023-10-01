@@ -10,6 +10,10 @@ using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using WS_Fonosoft.Src.ObraSocial.Dominio.Entidades;
+using WS_Fonosoft.Src.ObraSocial.Dominio.Interface;
+using WS_Fonosoft.Src.ObraSocial.Infraestructura;
+using WS_Fonosoft.Src.ObraSocial.Infraestructura.Interface;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -102,9 +106,13 @@ builder.Services.AddEndpointsApiExplorer();
 
 
 builder.Services.AddScoped<IUsuario, Usuario>();
+builder.Services.AddScoped<IObraSocial, ObraSocial>();
 builder.Services.AddScoped<IResponse<IUsuario>, Response<IUsuario>>();
+builder.Services.AddScoped<IResponse<IObraSocial>, Response<IObraSocial>>();
 builder.Services.AddScoped<IError, Error>();
 builder.Services.AddScoped<IResponse<IError>, Response<IError>>();
+
+
 
 #region MYSQL
 ConfigurationBuilder builderConfig = new ConfigurationBuilder();
@@ -120,7 +128,8 @@ string userMySql = configuration.GetValue<string>("ConnectionStrings:UserMysql")
 string databaseMysql = configuration.GetValue<string>("ConnectionStrings:DatabaseMysql");
 string portMysql = configuration.GetValue<string>("ConnectionStrings:PortMySql");
 string passwordMysql = configuration.GetValue<string>("ConnectionStrings:PasswordMysql");
-builder.Services.AddScoped<IMysqlRepositorio>(_ => new FonosoftAuthRepo(serverMySql, userMySql, databaseMysql, portMysql, passwordMysql));
+builder.Services.AddScoped<IMysqlRepositorioAuth>(_ => new FonosoftAuthRepo(serverMySql, userMySql, databaseMysql, portMysql, passwordMysql));
+builder.Services.AddScoped<IMysqlRepositorioObraSocial>(_ => new FonosoftObraSocialRepo(serverMySql, userMySql, databaseMysql, portMysql, passwordMysql));
 #endregion
 #region ENCRIPTACION
 string key = configuration.GetValue<string>("Encriptar:Key");
