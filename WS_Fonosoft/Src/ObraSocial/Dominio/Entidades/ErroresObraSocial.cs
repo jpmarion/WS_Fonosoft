@@ -16,7 +16,11 @@ namespace WS_Fonosoft.Src.ObraSocial.Dominio.Entidades
             [Description("La fecha de ingresa inicio no puede ser superior a la fecha de fin")]
             FechaInicioSuperior = 3,
             [Description("Obra social existente")]
-            NombreObraSocialExistente = 4
+            NombreObraSocialExistente = 4,
+            [Description("Ingrese el nombre de la obra social")]
+            IdObraSocialNullOrEmpty = 5,
+            [Description("Obra social inexistente")]
+            ObraSocialInexistente = 6
         }
         public ErroresObraSocial(Enum enumValor) : base(enumValor) { }
     }

@@ -40,8 +40,6 @@ namespace WS_Fonosoft.Src.ObraSocial.Infraestructura
             cmd.CommandType = CommandType.StoredProcedure;
 
             cmd.Parameters.AddWithValue("@Nombre", obraSocial.Nombre);
-            cmd.Parameters.AddWithValue("@FechaInicio", obraSocial.Periodo.FechaInicio);
-            cmd.Parameters.AddWithValue("@FechaFin", obraSocial.Periodo.FechaFin);
 
             MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);
 
@@ -53,6 +51,68 @@ namespace WS_Fonosoft.Src.ObraSocial.Infraestructura
             {
                 DataRow drObraSocial = dtObraSocial.Rows[0];
                 obraSocial.Id = int.Parse(drObraSocial["Id"].ToString());
+                return obraSocial;
+            }
+            return null;
+        }
+        public IList<IObraSocial> BuscarObrasSociales()
+        {
+            MySqlCommand cmd = new MySqlCommand("ObraSocial_S", getConexion());
+            cmd.CommandType = CommandType.StoredProcedure;
+
+            MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);
+
+            DataTable dtObraSocial = new DataTable();
+
+            adapter.Fill(dtObraSocial);
+
+            if (dtObraSocial.Rows.Count != 0)
+            {
+                IList<IObraSocial> lstObraSocial = new List<IObraSocial>();
+                foreach (DataRow item in dtObraSocial.Rows)
+                {
+                    IObraSocial obraSocial = new Dominio.Entidades.ObraSocial();
+                    obraSocial.Id = item.Field<int>("Id");
+                    obraSocial.Nombre = item.Field<string>("Nombre");
+                    obraSocial.Periodo.FechaInicio = item.Field<DateTime>("FechaInicio");
+                    obraSocial.Periodo.FechaFin = item.Field<DateTime>("FechaFin");
+                    if (DateTime.Now >= obraSocial.Periodo.FechaInicio && DateTime.Now <= obraSocial.Periodo.FechaFin)
+                    {
+                        obraSocial.Periodo.Estado = true;
+                    }
+
+                    lstObraSocial.Add(obraSocial);
+                }
+                return lstObraSocial;
+            }
+            return null;
+        }
+        public IObraSocial BuscarObraSocialXId(int Id)
+        {
+            MySqlCommand cmd = new MySqlCommand("ObraSocialXId_S", getConexion());
+            cmd.CommandType = CommandType.StoredProcedure;
+
+            cmd.Parameters.AddWithValue("@Id", Id);
+
+            MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);
+
+            DataTable dtObraSocial = new DataTable();
+
+            adapter.Fill(dtObraSocial);
+
+            if (dtObraSocial.Rows.Count != 0)
+            {
+                DataRow drObraSocial = dtObraSocial.Rows[0];
+                IObraSocial obraSocial = new Dominio.Entidades.ObraSocial();
+                obraSocial.Id = int.Parse(drObraSocial["Id"].ToString());
+                obraSocial.Nombre = drObraSocial["Nombre"].ToString();
+                obraSocial.Periodo.FechaInicio = DateTime.Parse(drObraSocial["FechaInicio"].ToString());
+                obraSocial.Periodo.FechaFin = DateTime.Parse(drObraSocial["FechaFin"].ToString());
+                if (DateTime.Now >= obraSocial.Periodo.FechaInicio && DateTime.Now <= obraSocial.Periodo.FechaFin)
+                {
+                    obraSocial.Periodo.Estado = true;
+                }
+
                 return obraSocial;
             }
             return null;
@@ -81,6 +141,34 @@ namespace WS_Fonosoft.Src.ObraSocial.Infraestructura
                 return obraSocial;
             }
             return null;
+        }
+        public void ModificarObraSocialXId(IObraSocial obraSocial)
+        {
+            MySqlCommand cmd = new MySqlCommand("ObraSocial_U", getConexion());
+            cmd.CommandType = CommandType.StoredProcedure;
+
+            cmd.Parameters.AddWithValue("@Id", obraSocial.Id);
+            cmd.Parameters.AddWithValue("@Nombre", obraSocial.Nombre);
+
+            cmd.ExecuteNonQuery();
+        }
+        public void HabilitarObraSocialXId(IObraSocial obraSocial)
+        {
+            MySqlCommand cmd = new MySqlCommand("ObraSocialHabilitar_U", getConexion());
+            cmd.CommandType = CommandType.StoredProcedure;
+
+            cmd.Parameters.AddWithValue("@Id", obraSocial.Id);
+
+            cmd.ExecuteNonQuery();
+        }
+        public void DesHabilitarObraSocialXId(IObraSocial obraSocial)
+        {
+            MySqlCommand cmd = new MySqlCommand("ObraSocialDeshabilitar_U", getConexion());
+            cmd.CommandType = CommandType.StoredProcedure;
+
+            cmd.Parameters.AddWithValue("@Id", obraSocial.Id);
+
+            cmd.ExecuteNonQuery();
         }
     }
 }

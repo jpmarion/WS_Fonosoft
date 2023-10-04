@@ -26,16 +26,70 @@ namespace WS_Fonosoft.Controllers
 
         // GET: api/<ObraSocialController>
         [HttpGet]
-        public IEnumerable<string> Get()
+        [ProducesResponseType(typeof(List<rspObraSocialGet>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Error), StatusCodes.Status400BadRequest)]
+        public IActionResult Get()
         {
-            return new string[] { "value1", "value2" };
+            AEjecutarCU<IObraSocial> buscarObrasSocialesCU = new BuscarObrasSocialesCU<IObraSocial>(_responseObraSocial, _mysqlRepositorio);
+            _responseObraSocial = buscarObrasSocialesCU.Ejecutar();
+
+            if (_responseObraSocial.Error.NroError == string.Empty)
+            {
+                if (_responseObraSocial.Data.Count == 0)
+                {
+                    return NoContent();
+                }
+
+                IList<rspObraSocialGet> lstRspObraSocialGet = new List<rspObraSocialGet>();
+                foreach (IObraSocial item in _responseObraSocial.Data)
+                {
+                    rspObraSocialGet rspObraSocialGet = new rspObraSocialGet();
+                    rspObraSocialGet.Id = item.Id;
+                    rspObraSocialGet.Nombre = item.Nombre;
+                    rspObraSocialGet.Estado = item.Periodo.Estado;
+
+                    lstRspObraSocialGet.Add(rspObraSocialGet);
+                }
+                return Ok(lstRspObraSocialGet);
+            }
+            else
+            {
+                return StatusCode(400, _responseObraSocial.Error);
+            }
         }
 
         // GET api/<ObraSocialController>/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        [ProducesResponseType(typeof(rspObraSocialGet), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Error), StatusCodes.Status400BadRequest)]
+        public IActionResult Get(int id)
         {
-            return "value";
+            IObraSocial obraSocial = new ObraSocial();
+            obraSocial.Id = id;
+
+            AEjecutarCU<IObraSocial> buscarObraSocialXIdCU = new BuscarObraSocialXIdCU<IObraSocial>(_responseObraSocial, _mysqlRepositorio, obraSocial);
+            _responseObraSocial = buscarObraSocialXIdCU.Ejecutar();
+
+            if (_responseObraSocial.Error.NroError == string.Empty)
+            {
+                if (_responseObraSocial.Data.Count == 0)
+                {
+                    return NoContent();
+                }
+
+                IObraSocial item = _responseObraSocial.Data[0];
+
+                rspObraSocialGet rspObraSocialGet = new rspObraSocialGet();
+                rspObraSocialGet.Id = item.Id;
+                rspObraSocialGet.Nombre = item.Nombre;
+                rspObraSocialGet.Estado = item.Periodo.Estado;
+
+                return Ok(rspObraSocialGet);
+            }
+            else
+            {
+                return StatusCode(400, _responseObraSocial.Error);
+            }
         }
 
         // POST api/<ObraSocialController>
@@ -46,8 +100,6 @@ namespace WS_Fonosoft.Controllers
         {
             IObraSocial obraSocial = new ObraSocial();
             obraSocial.Nombre = rspObraSocialPut.Nombre;
-            obraSocial.Periodo.FechaInicio = rspObraSocialPut.FechaInicio;
-            obraSocial.Periodo.FechaFin = rspObraSocialPut.FechaFin;
 
             AEjecutarCU<IObraSocial> agregarObraSocialCU = new AgregarObraSocialCU<IObraSocial>(_responseObraSocial, _mysqlRepositorio, obraSocial);
             _responseObraSocial = agregarObraSocialCU.Ejecutar();
@@ -67,23 +119,66 @@ namespace WS_Fonosoft.Controllers
         }
 
         // PUT api/<ObraSocialController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [HttpPut()]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Error), StatusCodes.Status400BadRequest)]
+        public IActionResult Put(rqtObraSocialPut rqtObraSocialPut)
         {
+            IObraSocial obraSocial = new ObraSocial();
+            obraSocial.Id = rqtObraSocialPut.IdObraSocial;
+            obraSocial.Nombre = rqtObraSocialPut.NombreObraSocial;
 
+            AEjecutarCU<IObraSocial> modificarObraSocialCU = new ModificarObraSocialCU<IObraSocial>(_responseObraSocial, _mysqlRepositorio, obraSocial);
+            _responseObraSocial = modificarObraSocialCU.Ejecutar();
+
+            if (_responseObraSocial.Error.NroError == string.Empty)
+            {
+                return Ok();
+            }
+            else
+            {
+                return StatusCode(400, _responseObraSocial.Error);
+            }
         }
 
-        // DELETE api/<ObraSocialController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+        [HttpPut("CambiarEstado")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Error), StatusCodes.Status400BadRequest)]
+        public IActionResult CambiarEstado(int IdObraSocial)
         {
+            IObraSocial obraSocial = new ObraSocial();
+            obraSocial.Id = IdObraSocial;
+
+            AEjecutarCU<IObraSocial> cambiarEstadoObraSocialCU = new CambiarEstadoObraSocialCU<IObraSocial>(_responseObraSocial, _mysqlRepositorio, obraSocial);
+            _responseObraSocial = cambiarEstadoObraSocialCU.Ejecutar();
+
+            if (_responseObraSocial.Error.NroError == string.Empty)
+            {
+                return Ok();
+            }
+            else
+            {
+                return StatusCode(400, _responseObraSocial.Error);
+            }
         }
+    }
+
+    public class rspObraSocialGet
+    {
+        public int Id { get; set; }
+        public string Nombre { get; set; }
+        public bool Estado { get; set; }
     }
 
     public class rspObraSocialPost
     {
         public string Nombre { get; set; }
-        public DateTime FechaInicio { get; set; }
-        public DateTime FechaFin { get; set; }
+    }
+
+    public class rqtObraSocialPut
+    {
+        public int IdObraSocial { get; set; }
+        public string NombreObraSocial { get; set; }
+
     }
 }
