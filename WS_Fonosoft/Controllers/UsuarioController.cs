@@ -24,10 +24,10 @@ namespace WS_Fonosoft.Controllers
         private readonly IConfiguration _configuration;
         private IResponse<IUsuario> _responseUsuario;
         private IResponse<IError> _responseError;
-        private readonly IMysqlRepositorioAuth _repoFonoAuth;
+        private readonly IRepositorioAuth _repoFonoAuth;
         private readonly IAes _aes;
 
-        public UsuarioController(IConfiguration configuration, IResponse<IUsuario> responseUsuario, IResponse<IError> responseError, IMysqlRepositorioAuth repoFonoAuth, IAes aes)
+        public UsuarioController(IConfiguration configuration, IResponse<IUsuario> responseUsuario, IResponse<IError> responseError, IRepositorioAuth repoFonoAuth, IAes aes)
         {
             _configuration = configuration;
             _responseUsuario = responseUsuario;

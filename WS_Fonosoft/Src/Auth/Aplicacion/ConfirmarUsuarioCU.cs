@@ -8,11 +8,11 @@ namespace WS_Fonosoft.Src.Auth.Aplicacion
 {
     public class ConfirmarUsuarioCU<T> : AEjecutarCU<T>
     {
-        private readonly IMysqlRepositorioAuth _mysqlRepositorio;
+        private readonly IRepositorioAuth _mysqlRepositorio;
         private readonly IUsuario _usuario;
         private ValidarUsuarioId _validarUsuarioId = new ValidarUsuarioId();
 
-        public ConfirmarUsuarioCU(IResponse<T> response, IMysqlRepositorioAuth mysqlRepositorio, IUsuario usuario) : base(response)
+        public ConfirmarUsuarioCU(IResponse<T> response, IRepositorioAuth mysqlRepositorio, IUsuario usuario) : base(response)
         {
             _mysqlRepositorio = mysqlRepositorio;
             _usuario = usuario;

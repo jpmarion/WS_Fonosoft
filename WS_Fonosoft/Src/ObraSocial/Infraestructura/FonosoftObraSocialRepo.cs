@@ -5,7 +5,7 @@ using WS_Fonosoft.Src.ObraSocial.Infraestructura.Interface;
 
 namespace WS_Fonosoft.Src.ObraSocial.Infraestructura
 {
-    public class FonosoftObraSocialRepo : IMysqlRepositorioObraSocial
+    public class FonosoftObraSocialRepo : IRepositorioObraSocial
     {
         private readonly string _connectionString;
         private MySqlConnection _conexion;

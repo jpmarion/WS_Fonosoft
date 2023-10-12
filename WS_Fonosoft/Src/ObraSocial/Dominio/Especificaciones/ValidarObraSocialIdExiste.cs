@@ -7,9 +7,9 @@ namespace WS_Fonosoft.Src.ObraSocial.Dominio.Especificaciones
 {
     public class ValidarObraSocialIdExiste : AValidarObraSocial
     {
-        private readonly IMysqlRepositorioObraSocial _mysqlRepositorio;
+        private readonly IRepositorioObraSocial _mysqlRepositorio;
 
-        public ValidarObraSocialIdExiste(IMysqlRepositorioObraSocial mysqlRepositorio)
+        public ValidarObraSocialIdExiste(IRepositorioObraSocial mysqlRepositorio)
         {
             _mysqlRepositorio = mysqlRepositorio;
         }

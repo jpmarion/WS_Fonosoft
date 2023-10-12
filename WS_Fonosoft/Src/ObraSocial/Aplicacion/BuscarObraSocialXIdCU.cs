@@ -8,11 +8,11 @@ namespace WS_Fonosoft.Src.ObraSocial.Aplicacion
 {
     public class BuscarObraSocialXIdCU<T> : AEjecutarCU<T>
     {
-        private readonly IMysqlRepositorioObraSocial _mysqlRepositorio;
+        private readonly IRepositorioObraSocial _mysqlRepositorio;
         private IObraSocial _obraSocial;
         private readonly ValidarObraSocialId _validarObraSocialId = new ValidarObraSocialId();
 
-        public BuscarObraSocialXIdCU(IResponse<T> response, IMysqlRepositorioObraSocial mysqlRepositorio, IObraSocial obraSocial) : base(response)
+        public BuscarObraSocialXIdCU(IResponse<T> response, IRepositorioObraSocial mysqlRepositorio, IObraSocial obraSocial) : base(response)
         {
             _mysqlRepositorio = mysqlRepositorio;
             _obraSocial = obraSocial;

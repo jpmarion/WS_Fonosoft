@@ -9,7 +9,7 @@ namespace WS_Fonosoft.Src.Auth.Aplicacion
 {
     public class RegistrarUsuarioCU<T> : AEjecutarCU<T>
     {
-        private readonly IMysqlRepositorioAuth _mysqlRepositorio;
+        private readonly IRepositorioAuth _mysqlRepositorio;
         private readonly IEmailRepo _emailRepo;
         private readonly IAes _aes;
         private readonly IUsuario _usuario;
@@ -18,7 +18,7 @@ namespace WS_Fonosoft.Src.Auth.Aplicacion
         private readonly ValidarUsuarioPassword _validarUsuarioPassword = new ValidarUsuarioPassword();
 
         #region USUARIO
-        public RegistrarUsuarioCU(IResponse<T> response, IMysqlRepositorioAuth mysqlRepositorio, IEmailRepo emailRepo, IAes aes, IUsuario usuario) : base(response)
+        public RegistrarUsuarioCU(IResponse<T> response, IRepositorioAuth mysqlRepositorio, IEmailRepo emailRepo, IAes aes, IUsuario usuario) : base(response)
         {
             _mysqlRepositorio = mysqlRepositorio;
             this._emailRepo = emailRepo;

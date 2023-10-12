@@ -6,9 +6,9 @@ namespace WS_Fonosoft.Src.ObraSocial.Aplicacion
 {
     public class BuscarObrasSocialesCU<T> : AEjecutarCU<T>
     {
-        private readonly IMysqlRepositorioObraSocial _mysqlRepositorio;
+        private readonly IRepositorioObraSocial _mysqlRepositorio;
 
-        public BuscarObrasSocialesCU(IResponse<T> response, IMysqlRepositorioObraSocial mysqlRepositorio) : base(response)
+        public BuscarObrasSocialesCU(IResponse<T> response, IRepositorioObraSocial mysqlRepositorio) : base(response)
         {
             this._mysqlRepositorio = mysqlRepositorio;
         }

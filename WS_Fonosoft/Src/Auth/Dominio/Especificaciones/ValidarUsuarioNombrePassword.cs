@@ -7,9 +7,9 @@ namespace WS_Fonosoft.Src.Auth.Dominio.Especificaciones
 {
     public class ValidarUsuarioNombrePassword : AValidarUsuario
     {
-        private readonly IMysqlRepositorioAuth _mysqlRepositorio;
+        private readonly IRepositorioAuth _mysqlRepositorio;
 
-        public ValidarUsuarioNombrePassword(IMysqlRepositorioAuth mysqlRepositorio)
+        public ValidarUsuarioNombrePassword(IRepositorioAuth mysqlRepositorio)
         {
             _mysqlRepositorio = mysqlRepositorio;
         }

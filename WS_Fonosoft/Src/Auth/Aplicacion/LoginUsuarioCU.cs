@@ -9,14 +9,14 @@ namespace WS_Fonosoft.Src.Auth.Aplicacion
 {
     public class LoginUsuarioCU<T> : AEjecutarCU<T>
     {
-        private readonly IMysqlRepositorioAuth _mysqlRepositorio;
+        private readonly IRepositorioAuth _mysqlRepositorio;
         private readonly IAes _aes;
         private readonly IUsuario _usuario;
         private readonly ValidarUsuarioNombreUsuario _validarUsuarioNombreUsuario;
         private readonly ValidarUsuarioPassword _validarUsuarioPassword = new ValidarUsuarioPassword();
         private readonly ValidarUsuarioNombrePassword _validarUsuarioNombrePassword;
 
-        public LoginUsuarioCU(IResponse<T> response, IMysqlRepositorioAuth mysqlRepositorio, IAes aes, IUsuario usuario) : base(response)
+        public LoginUsuarioCU(IResponse<T> response, IRepositorioAuth mysqlRepositorio, IAes aes, IUsuario usuario) : base(response)
         {
             _mysqlRepositorio = mysqlRepositorio;
             _aes = aes;

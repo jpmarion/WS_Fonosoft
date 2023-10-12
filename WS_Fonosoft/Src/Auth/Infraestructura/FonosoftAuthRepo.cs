@@ -6,7 +6,7 @@ using WS_Fonosoft.Src.Auth.Infraestructura.Interface;
 
 namespace WS_Fonosoft.Src.Auth.Infraestructura
 {
-    public class FonosoftAuthRepo : IMysqlRepositorioAuth
+    public class FonosoftAuthRepo : IRepositorioAuth
     {
         private readonly string _connectionString;
         private MySqlConnection _conexion;

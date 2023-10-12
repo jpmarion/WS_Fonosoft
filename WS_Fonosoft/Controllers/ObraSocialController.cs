@@ -16,9 +16,9 @@ namespace WS_Fonosoft.Controllers
     public class ObraSocialController : ControllerBase
     {
         private IResponse<IObraSocial> _responseObraSocial;
-        private readonly IMysqlRepositorioObraSocial _mysqlRepositorio;
+        private readonly IRepositorioObraSocial _mysqlRepositorio;
 
-        public ObraSocialController(IResponse<IObraSocial> responseObraSocial, IMysqlRepositorioObraSocial mysqlRepositorio)
+        public ObraSocialController(IResponse<IObraSocial> responseObraSocial, IRepositorioObraSocial mysqlRepositorio)
         {
             _responseObraSocial = responseObraSocial;
             _mysqlRepositorio = mysqlRepositorio;

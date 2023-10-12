@@ -2,7 +2,7 @@
 
 namespace WS_Fonosoft.Src.Auth.Infraestructura.Interface
 {
-    public interface IMysqlRepositorioAuth
+    public interface IRepositorioAuth
     {
         void BeginTransaction();
         void CommitTransaction();
