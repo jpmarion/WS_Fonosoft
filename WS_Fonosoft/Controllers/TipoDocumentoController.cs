@@ -62,6 +62,43 @@ namespace WS_Fonosoft.Controllers
             }
         }
 
+        [HttpGet("GetHabilitados")]
+        [ProducesResponseType(typeof(List<rspTipoDocumentoGet>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(Error), StatusCodes.Status400BadRequest)]
+        public IActionResult GetHabilitados()
+        {
+            AEjecutarCU<ITipoDocumento> buscarTiposDocumentosHabilitadosCU = new BuscarTiposDocumentosHabilitadosCU<ITipoDocumento>(_responseTipoDocumento, _repositorioTipoDocumento);
+            _responseTipoDocumento = buscarTiposDocumentosHabilitadosCU.Ejecutar();
+
+            if (_responseTipoDocumento.Error.NroError == string.Empty)
+            {
+                if (_responseTipoDocumento.Data.Count == 0)
+                {
+                    return NoContent();
+                }
+
+                List<rspTipoDocumentoGet> lstRspTipoDocumentoGet = new List<rspTipoDocumentoGet>();
+                foreach (ITipoDocumento item in _responseTipoDocumento.Data)
+                {
+                    rspTipoDocumentoGet rspTipoDocumentoGet = new rspTipoDocumentoGet();
+                    rspTipoDocumentoGet.IdTipoDocumento = item.Id;
+                    rspTipoDocumentoGet.NombreTipoDocumento = item.Nombre;
+                    rspTipoDocumentoGet.FechaInicio = item.Periodo.FechaInicio;
+                    rspTipoDocumentoGet.FechaFin = item.Periodo.FechaFin;
+                    rspTipoDocumentoGet.Estado = item.Periodo.Estado;
+
+                    lstRspTipoDocumentoGet.Add(rspTipoDocumentoGet);
+                }
+
+                return Ok(lstRspTipoDocumentoGet);
+            }
+            else
+            {
+                return StatusCode(StatusCodes.Status400BadRequest, _responseTipoDocumento.Error);
+            }
+        }
+
         // GET api/<TipoDocumentoController>/5
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(rspTipoDocumentoGet), StatusCodes.Status200OK)]

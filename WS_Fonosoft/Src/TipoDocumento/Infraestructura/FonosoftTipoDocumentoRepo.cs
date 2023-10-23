@@ -91,6 +91,38 @@ namespace WS_Fonosoft.Src.TipoDocumento.Infraestructura
             }
             return null;
         }
+        public IList<ITipoDocumento> BuscarTiposDocumentosHabilitados()
+        {
+            MySqlCommand cmd = new MySqlCommand("TipoDocumentoHabilitados_S", getConexion());
+            cmd.CommandType = CommandType.StoredProcedure;
+
+            MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);
+
+            DataTable dtTipoDocumento = new DataTable();
+
+            adapter.Fill(dtTipoDocumento);
+
+            if (dtTipoDocumento.Rows.Count != 0)
+            {
+                IList<ITipoDocumento> lstTipoDocumento = new List<ITipoDocumento>();
+
+                foreach (DataRow item in dtTipoDocumento.Rows)
+                {
+                    ITipoDocumento tipoDocumento = new Dominio.Entidades.TipoDocumento();
+                    tipoDocumento.Id = item.Field<int>("Id");
+                    tipoDocumento.Nombre = item.Field<string>("Nombre");
+                    tipoDocumento.Periodo.FechaInicio = item.Field<DateTime>("FechaInicio");
+                    tipoDocumento.Periodo.FechaFin = item.Field<DateTime>("FechaFin");
+                    if (DateTime.Now >= tipoDocumento.Periodo.FechaInicio && DateTime.Now <= tipoDocumento.Periodo.FechaFin)
+                    {
+                        tipoDocumento.Periodo.Estado = true;
+                    }
+                    lstTipoDocumento.Add(tipoDocumento);
+                }
+                return lstTipoDocumento;
+            }
+            return null;
+        }
         public ITipoDocumento BuscarTipoDocumentoXId(int id)
         {
             MySqlCommand cmd = new MySqlCommand("TipoDocumentoXId_S", getConexion());
