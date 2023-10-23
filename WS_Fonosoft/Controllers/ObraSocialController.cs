@@ -58,6 +58,40 @@ namespace WS_Fonosoft.Controllers
             }
         }
 
+        [HttpGet("GetHabilitados")]
+        [ProducesResponseType(typeof(List<rspObraSocialGet>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Error), StatusCodes.Status400BadRequest)]
+        public IActionResult GetHabilitados()
+        {
+            AEjecutarCU<IObraSocial> buscarObrasSocialesHabilitadasCU = new BuscarObrasSocialesHabilitadasCU<IObraSocial>(_responseObraSocial, _mysqlRepositorio);
+            _responseObraSocial = buscarObrasSocialesHabilitadasCU.Ejecutar();
+
+            if (_responseObraSocial.Error.NroError == string.Empty)
+            {
+                if (_responseObraSocial.Data.Count == 0)
+                {
+                    return NoContent();
+                }
+
+                IList<rspObraSocialGet> lstRspObraSocialGet = new List<rspObraSocialGet>();
+                foreach (IObraSocial item in _responseObraSocial.Data)
+                {
+                    rspObraSocialGet rspObraSocialGet = new rspObraSocialGet();
+                    rspObraSocialGet.Id = item.Id;
+                    rspObraSocialGet.Nombre = item.Nombre;
+                    rspObraSocialGet.Estado = item.Periodo.Estado;
+
+                    lstRspObraSocialGet.Add(rspObraSocialGet);
+                }
+                return Ok(lstRspObraSocialGet);
+            }
+            else
+            {
+                return StatusCode(400, _responseObraSocial.Error);
+            }
+        }
+
+
         // GET api/<ObraSocialController>/5
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(rspObraSocialGet), StatusCodes.Status200OK)]

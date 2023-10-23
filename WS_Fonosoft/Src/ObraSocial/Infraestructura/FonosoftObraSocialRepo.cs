@@ -87,6 +87,38 @@ namespace WS_Fonosoft.Src.ObraSocial.Infraestructura
             }
             return null;
         }
+        public IList<IObraSocial> BuscarObrasSocialesHabilitadas()
+        {
+            MySqlCommand cmd = new MySqlCommand("ObraSocialHabilitadas_S", getConexion());
+            cmd.CommandType = CommandType.StoredProcedure;
+
+            MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);
+
+            DataTable dtObraSocial = new DataTable();
+
+            adapter.Fill(dtObraSocial);
+
+            if (dtObraSocial.Rows.Count != 0)
+            {
+                IList<IObraSocial> lstObraSocial = new List<IObraSocial>();
+                foreach (DataRow item in dtObraSocial.Rows)
+                {
+                    IObraSocial obraSocial = new Dominio.Entidades.ObraSocial();
+                    obraSocial.Id = item.Field<int>("Id");
+                    obraSocial.Nombre = item.Field<string>("Nombre");
+                    obraSocial.Periodo.FechaInicio = item.Field<DateTime>("FechaInicio");
+                    obraSocial.Periodo.FechaFin = item.Field<DateTime>("FechaFin");
+                    if (DateTime.Now >= obraSocial.Periodo.FechaInicio && DateTime.Now <= obraSocial.Periodo.FechaFin)
+                    {
+                        obraSocial.Periodo.Estado = true;
+                    }
+
+                    lstObraSocial.Add(obraSocial);
+                }
+                return lstObraSocial;
+            }
+            return null;
+        }
         public IObraSocial BuscarObraSocialXId(int Id)
         {
             MySqlCommand cmd = new MySqlCommand("ObraSocialXId_S", getConexion());
