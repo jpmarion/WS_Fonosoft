@@ -93,7 +93,7 @@ namespace WS_Fonosoft.Src.TipoDocumento.Infraestructura
         }
         public IList<ITipoDocumento> BuscarTiposDocumentosHabilitados()
         {
-            MySqlCommand cmd = new MySqlCommand("TipoDocumentoHabilitados_S", getConexion());
+            MySqlCommand cmd = new MySqlCommand("TipoContacto_S", getConexion());
             cmd.CommandType = CommandType.StoredProcedure;
 
             MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);

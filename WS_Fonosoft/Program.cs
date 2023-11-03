@@ -21,6 +21,9 @@ using WS_Fonosoft.Src.TipoDocumento.Dominio.Entidades;
 using WS_Fonosoft.Src.Entidades.Dominio.Interface;
 using WS_Fonosoft.Src.Entidades.Infraestructura.Interface;
 using WS_Fonosoft.Src.Entidades.Infraestructura;
+using WS_Fonosoft.Src.TipoContacto.Dominio.Interface;
+using WS_Fonosoft.Src.TipoContacto.Infraestructura.Interface;
+using WS_Fonosoft.Src.TipoContacto.Infraestructura;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -119,6 +122,7 @@ builder.Services.AddScoped<IResponse<IUsuario>, Response<IUsuario>>();
 builder.Services.AddScoped<IResponse<IObraSocial>, Response<IObraSocial>>();
 builder.Services.AddScoped<IResponse<ITipoDocumento>, Response<ITipoDocumento>>();
 builder.Services.AddScoped<IResponse<IEntidad>, Response<IEntidad>>();
+builder.Services.AddScoped<IResponse<ITipoContacto>, Response<ITipoContacto>>();
 builder.Services.AddScoped<IError, Error>();
 builder.Services.AddScoped<IResponse<IError>, Response<IError>>();
 
@@ -140,6 +144,7 @@ builder.Services.AddScoped<IRepositorioAuth>(_ => new FonosoftAuthRepo(serverMyS
 builder.Services.AddScoped<IRepositorioObraSocial>(_ => new FonosoftObraSocialRepo(serverMySql, userMySql, databaseMysql, portMysql, passwordMysql));
 builder.Services.AddScoped<IRepositorioTipoDocumento>(_ => new FonosoftTipoDocumentoRepo(serverMySql,userMySql,databaseMysql, portMysql, passwordMysql));
 builder.Services.AddScoped<IRepositorioEntidad>(_ => new FonosoftEntidadRepo(serverMySql, userMySql, databaseMysql, portMysql, passwordMysql));
+builder.Services.AddScoped<IRepositorioTipoContacto>(_ => new FonosoftTipoContactoRepo(serverMySql, userMySql, databaseMysql, portMysql, passwordMysql));
 #endregion
 #region ENCRIPTACION
 string key = configuration.GetValue<string>("Encriptar:Key");
